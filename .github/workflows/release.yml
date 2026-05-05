@@ -27,9 +27,10 @@ jobs:
           restore-keys: |
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
+      - name: Clear stale Zig package store
+        run: rm -rf .zig-cache/p
+        shell: bash
       - run: zig build
-        env:
-          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: x86_64-linux
@@ -50,9 +51,10 @@ jobs:
           restore-keys: |
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
+      - name: Clear stale Zig package store
+        run: Remove-Item -Recurse -Force .zig-cache/p -ErrorAction SilentlyContinue
+        shell: pwsh
       - run: zig build
-        env:
-          ZIG_GLOBAL_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: x86_64-windows
@@ -73,9 +75,10 @@ jobs:
           restore-keys: |
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
+      - name: Clear stale Zig package store
+        run: rm -rf .zig-cache/p
+        shell: bash
       - run: zig build
-        env:
-          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: arm64-macos

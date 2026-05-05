@@ -34,8 +34,6 @@ jobs:
           version: ${{ env.ZIG_VERSION }}
           use-cache: false
       - run: zig build check --summary all
-        env:
-          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
 
   test:
     name: Tests (${{ matrix.name }})
@@ -58,6 +56,7 @@ jobs:
           restore-keys: |
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
+      - name: Clear stale Zig package store
+        run: rm -rf .zig-cache/p
+        shell: bash
       - run: zig build test --summary all
-        env:
-          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
