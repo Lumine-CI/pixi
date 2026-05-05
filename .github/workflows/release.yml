@@ -14,9 +14,6 @@ env:
 jobs:
   x86_64-linux:
     runs-on: ubuntu-latest
-    env:
-      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
-      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
@@ -31,6 +28,8 @@ jobs:
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
       - run: zig build
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: x86_64-linux
@@ -38,9 +37,6 @@ jobs:
 
   x86_64-windows:
     runs-on: windows-latest
-    env:
-      ZIG_GLOBAL_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\zig-global
-      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}\.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
@@ -55,6 +51,8 @@ jobs:
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
       - run: zig build
+        env:
+          ZIG_GLOBAL_CACHE_DIR: C:\Users\runneradmin\AppData\Local\Temp\zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: x86_64-windows
@@ -62,9 +60,6 @@ jobs:
 
   arm64-macos:
     runs-on: macos-14
-    env:
-      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
-      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
@@ -79,6 +74,8 @@ jobs:
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
       - run: zig build
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
       - uses: actions/upload-artifact@v4
         with:
           name: arm64-macos

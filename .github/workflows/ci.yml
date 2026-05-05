@@ -1,6 +1,5 @@
 name: CI
 
-# PR / manual: three native test jobs (no skipped rows). Push to main: Linux-only (fast).
 on:
   push:
     branches: [main]
@@ -28,9 +27,6 @@ jobs:
   check:
     name: Compile Check
     runs-on: ubuntu-latest
-    env:
-      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
-      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
@@ -38,6 +34,8 @@ jobs:
           version: ${{ env.ZIG_VERSION }}
           use-cache: false
       - run: zig build check --summary all
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
 
   test:
     name: Tests (${{ matrix.name }})
@@ -47,9 +45,6 @@ jobs:
       matrix:
         include: ${{ github.event_name == 'push' && fromJSON('[{"os":"ubuntu-latest","name":"Linux"}]') || fromJSON('[{"os":"ubuntu-latest","name":"Linux"},{"os":"windows-latest","name":"Windows"},{"os":"macos-14","name":"macOS"}]') }}
     runs-on: ${{ matrix.os }}
-    env:
-      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
-      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
@@ -64,3 +59,5 @@ jobs:
             zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
             zig-local-${{ runner.os }}-
       - run: zig build test --summary all
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
