@@ -19,15 +19,8 @@ jobs:
       - uses: mlugg/setup-zig@v2
         with:
           version: ${{ env.ZIG_VERSION }}
-          use-cache: false
-      - uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.zig-cache
-          key: zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon', 'build.zig') }}
-          restore-keys: |
-            zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
-            zig-local-${{ runner.os }}-
-      - name: Clear stale Zig package store
+          cache-key: ${{ hashFiles('build.zig.zon', 'build.zig') }}
+      - name: Purge stale Zig package store
         run: rm -rf .zig-cache/p
         shell: bash
       - run: zig build
@@ -43,15 +36,8 @@ jobs:
       - uses: mlugg/setup-zig@v2
         with:
           version: ${{ env.ZIG_VERSION }}
-          use-cache: false
-      - uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}\.zig-cache
-          key: zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon', 'build.zig') }}
-          restore-keys: |
-            zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
-            zig-local-${{ runner.os }}-
-      - name: Clear stale Zig package store
+          cache-key: ${{ hashFiles('build.zig.zon', 'build.zig') }}
+      - name: Purge stale Zig package store
         run: Remove-Item -Recurse -Force .zig-cache/p -ErrorAction SilentlyContinue
         shell: pwsh
       - run: zig build
@@ -67,15 +53,8 @@ jobs:
       - uses: mlugg/setup-zig@v2
         with:
           version: ${{ env.ZIG_VERSION }}
-          use-cache: false
-      - uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.zig-cache
-          key: zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon', 'build.zig') }}
-          restore-keys: |
-            zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
-            zig-local-${{ runner.os }}-
-      - name: Clear stale Zig package store
+          cache-key: ${{ hashFiles('build.zig.zon', 'build.zig') }}
+      - name: Purge stale Zig package store
         run: rm -rf .zig-cache/p
         shell: bash
       - run: zig build
