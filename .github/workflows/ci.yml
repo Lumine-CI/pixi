@@ -25,17 +25,42 @@ env:
   ZIG_VERSION: "0.16.0"
 
 jobs:
-  test:
-    name: Tests (${{ matrix.name }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ github.event_name == 'push' && fromJSON('[{"os":"ubuntu-latest","name":"Linux"}]') || fromJSON('[{"os":"ubuntu-latest","name":"Linux"},{"os":"windows-latest","name":"Windows"},{"os":"macos-14","name":"macOS"}]') }}
-    runs-on: ${{ matrix.os }}
+  check:
+    name: Compile Check
+    runs-on: ubuntu-latest
+    env:
+      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
+      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v2
         with:
           version: ${{ env.ZIG_VERSION }}
-          cache-key: ${{ hashFiles('build.zig.zon') }}
+          use-cache: false
+      - run: zig build check --summary all
+
+  test:
+    name: Tests (${{ matrix.name }})
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ github.event_name == 'push' && fromJSON('[{"os":"ubuntu-latest","name":"Linux"}]') || fromJSON('[{"os":"ubuntu-latest","name":"Linux"},{"os":"windows-latest","name":"Windows"},{"os":"macos-14","name":"macOS"}]') }}
+    runs-on: ${{ matrix.os }}
+    env:
+      ZIG_GLOBAL_CACHE_DIR: /tmp/zig-global
+      ZIG_LOCAL_CACHE_DIR: ${{ github.workspace }}/.zig-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: ${{ env.ZIG_VERSION }}
+          use-cache: false
+      - uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.zig-cache
+          key: zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon', 'build.zig') }}
+          restore-keys: |
+            zig-local-${{ runner.os }}-${{ hashFiles('build.zig.zon') }}
+            zig-local-${{ runner.os }}-
       - run: zig build test --summary all
